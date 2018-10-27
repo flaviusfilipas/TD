@@ -4,112 +4,115 @@
 #include <stdbool.h>
 #include "at.h"
 
-AT_DATA *data=NULL;
+AT_DATA data;
 
 int parse(char ch){
 	static int state=0;
 	data.line_count=0;
+	
 	switch(state){
 		case 0:
-				if(strcmp(ch,"CR")==0)
+				if(ch == 13)
 					state=1;
 				else
 					state=50; //ERROR
-		break;
+		return;
 
 		case 1:
-				if(strcmp(ch,"LF")==0)
+				if(ch == 10)
 					state=2;
 				else
 					state=50;  //ERROR
-		break;
+		return;
 		case 2:
-				if(strcmp(ch,"E")==0)
+				if(ch == 'E')
 					state=9;
 				else
-					if(strcmp(ch,"O")==0)
+					if(ch == 'O')
 						state=8;
 					else
-						if(strcmp(ch,"+")==0)
+						if(ch == '+')
 							state=3;
 						else
 							state=50; //ERROR
-		break;
+		return;
 		case 3:
-				while(strcmp(ch,"CR")!=0)
+				if(ch == 13)
 				{
-					data.data[data.line_count++][data.char_count];
+					data.data[data.line_count][data.char_count++];
 				}	
 				else
 					state=4;
-		break;
+		return;
 		case 4:
-				if(strcmp(ch,"CR")==0)
+				if(ch == 13)
 					state=5;
 				else
 					state=50;
-		break;
+		return;
 		case 5:
-				if(strcmp(ch,"CR")==0)
+				if(ch == 13)
 						state=6;
 					else
-						if(strcmp(ch,"+")==0)
+						if(ch == '+'){ 
 							state=3;
+							data.line_count++;
+						}
 						else
 							state=50; //ERROR
-		break;
+		return;
 		case 6:
-				if(strcmp(ch,"LF")==0)
+				if(ch == 10)
 					state=2;
 				else
 					state=50;  //ERROR
-		break;
+		return;
 		case 8:
-				if(strcmp(ch,"K")==0){
+				if(ch == 'K'){
 					state=13;
-					ok=1;
+					data.ok=1;
 				}
 				else
 					state=50;  //ERROR
-		break;
+		return;
 		case 9:
-				if(strcmp(ch,"R")==0)
+				if(ch == 'R')
 					state=10;
 				else
 					state=50;  //ERROR
-		break;
+		return;
 		case 10:
-				if(strcmp(ch,"R")==0)
+				if(ch == 'R')
 					state=11;
 				else
 					state=50;  //ERROR
-		break;
+		return;
 		case 11:
-				if(strcmp(ch,"O")==0)
+				if(ch == 'O')
 					state=12;
 				else
 					state=50;  //ERROR
-		break;
+		return;
 		case 12:
-				if(strcmp(ch,"R")==0){
+				if(ch == 'R'){
 					state=13;
-					ok=0;
+					data.ok=0;
 				}
 				else
 					state=50;  //ERROR
-		break;
+		return;
 		case 13:
-				if(strcmp(ch,"CR")==0)
+				if(ch == 13)
 					state=14;
 				else
 					state=50;  //ERROR
-		break;
+		return;
 		case 14:
-				if(strcmp(ch,"LF")==0)
+				if(ch == 10)
 					return 0;
 				else
 					state=50;  //ERROR
-		break;
+		return;
 		case 50:
 				return 1;
 

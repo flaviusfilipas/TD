@@ -6,10 +6,12 @@
 
 typedef struct {
     char data[STR_CNT][STR_SIZE+1];
-    bool ok;
+    int ok;
     int line_count;
     int char_count;
 }AT_DATA;
+
+extern AT_DATA data;
 
 int parse(char ch);
 void printdata();
